@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 import 'effects/indicator_effect.dart';
 import 'effects/worm_effect.dart';
@@ -10,7 +11,7 @@ typedef OnDotClicked = void Function(int index);
 
 class SmoothPageIndicator extends AnimatedWidget {
   // Page view controller
-  final Listenable controller;
+  final PreloadPageController controller;
 
   /// Holds effect configuration to be used in the [IndicatorPainter]
   final IndicatorEffect effect;
@@ -107,7 +108,11 @@ class SmoothIndicator extends StatelessWidget {
         (textDirection ?? Directionality.of(context)) == TextDirection.rtl;
 
     return RotatedBox(
-      quarterTurns: axisDirection == Axis.vertical ? 1 : isRTL ? 2 : 0,
+      quarterTurns: axisDirection == Axis.vertical
+          ? 1
+          : isRTL
+              ? 2
+              : 0,
       child: GestureDetector(
         onTapUp: _onTap,
         child: CustomPaint(
