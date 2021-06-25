@@ -11,7 +11,9 @@ typedef OnDotClicked = void Function(int index);
 
 class SmoothPageIndicator extends AnimatedWidget {
   // Page view controller
-  final PreloadPageController controller;
+  final PageController? controller;
+
+  final PreloadPageController? preloadController;
 
   /// Holds effect configuration to be used in the [IndicatorPainter]
   final IndicatorEffect effect;
@@ -39,9 +41,21 @@ class SmoothPageIndicator extends AnimatedWidget {
     this.axisDirection = Axis.horizontal,
     this.textDirection,
     this.onDotClicked,
+    this.preloadController,
     this.effect = const WormEffect(),
-  }) : super(key: key, listenable: controller);
-
+  })  : assert(preloadController == null),
+        super(key: key, listenable: controller!);
+  SmoothPageIndicator.preCacheController({
+    Key? key,
+    this.controller,
+    required this.count,
+    this.axisDirection = Axis.horizontal,
+    this.textDirection,
+    this.onDotClicked,
+    required this.preloadController,
+    this.effect = const WormEffect(),
+  })  : assert(controller == null),
+        super(key: key, listenable: preloadController!);
   @override
   Widget build(BuildContext context) {
     return SmoothIndicator(
@@ -56,9 +70,17 @@ class SmoothPageIndicator extends AnimatedWidget {
 
   double get _offset {
     try {
-      return controller.page ?? controller.initialPage.toDouble();
+      if (controller == null) {
+        return preloadController!.page ??
+            preloadController!.initialPage.toDouble();
+      }
+      return controller!.page ?? controller!.initialPage.toDouble();
     } catch (_) {
-      return controller.initialPage.toDouble();
+      if (controller == null) {
+        return preloadController!.page ??
+            preloadController!.initialPage.toDouble();
+      }
+      return controller!.page ?? controller!.initialPage.toDouble();
     }
   }
 }
